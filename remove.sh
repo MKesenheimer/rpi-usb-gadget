@@ -19,7 +19,7 @@ confirm() {
 }
 
 cat << EOF
-This script will modify '/boot/config.txt', '/boot/cmdline.txt' and other files.
+This script will modify '/boot/firmware/config.txt', '/boot/firmware/cmdline.txt' and other files.
 Warning, It might brick your device!
 Do not run unless you understand what it is doing.
 
@@ -69,15 +69,15 @@ fi
 
 
 
-if $(grep -q modules-load=dwc2 /boot/cmdline.txt) ; then
+if $(grep -q modules-load=dwc2 /boot/firmware/cmdline.txt) ; then
     echo
-    echo "remove line modules-load=dwc2 from /boot/cmdline.txt"
+    echo "remove line modules-load=dwc2 from /boot/firmware/cmdline.txt"
     if ! confirm ; then
         exit
     fi
-    cat /boot/cmdline.txt
-    sudo sed -i '${s/ modules-load=dwc2//}' /boot/cmdline.txt
-    cat /boot/cmdline.txt
+    cat /boot/firmware/cmdline.txt
+    sudo sed -i '${s/ modules-load=dwc2//}' /boot/firmware/cmdline.txt
+    cat /boot/firmware/cmdline.txt
 fi
 
 if $(grep -q 'denyinterfaces usb0' /etc/dhcpcd.conf) ; then

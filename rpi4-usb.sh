@@ -8,7 +8,7 @@
 # Options for later
 USBFILE=/usr/local/sbin/usb-gadget.sh
 UNITFILE=/lib/systemd/system/usb-gadget.service
-BASE_IP=10.55.0
+BASE_IP=10.0.1
 
 # some usefull functions
 confirm() {
@@ -38,7 +38,7 @@ teeconfirm() {
 ##### Actual work #####
 
 cat << EOF
-This script will modify '/boot/config.txt', '/boot/cmdline.txt' and other files.
+This script will modify '/boot/firmware/config.txt', '/boot/firmware/cmdline.txt' and other files.
 Warning, It might brick your device!
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -53,15 +53,15 @@ Continue with modifications?
 EOF
 ! confirm && exit
 
-teeconfirm "dtoverlay=dwc2" "/boot/config.txt"
+teeconfirm "dtoverlay=dwc2" "/boot/firmware/config.txt"
 
-if ! $(grep -q modules-load=dwc2 /boot/cmdline.txt) ; then
+if ! $(grep -q modules-load=dwc2 /boot/firmware/cmdline.txt) ; then
     echo
-    echo "Add the line modules-load=dwc2 to /boot/cmdline.txt"
+    echo "Add the line modules-load=dwc2 to /boot/firmware/cmdline.txt"
     if ! confirm ; then
         exit
     fi
-    sudo sed -i '${s/$/ modules-load=dwc2/}' /boot/cmdline.txt
+    sudo sed -i '${s/$/ modules-load=dwc2/}' /boot/firmware/cmdline.txt
 fi
 
 teeconfirm "libcomposite" "/etc/modules"
@@ -83,10 +83,16 @@ dhcp-rapid-commit
 dhcp-authoritative
 no-ping
 interface=usb0
+bind-interfaces
+listen-address=10.0.1.1
 dhcp-range=usb0,$BASE_IP.2,$BASE_IP.6,255.255.255.248,1h
 domain=usb.lan
-dhcp-option=usb0,3
+server=1.1.1.1
+#dhcp-option=usb0,3
+dhcp-option-force=option:router,10.0.1.1
 leasefile-ro
+bogus-priv
+domain-needed
 EOF
     echo "Created /etc/dnsmasq.d/usb-gadget"
 fi
