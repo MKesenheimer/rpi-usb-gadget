@@ -84,12 +84,12 @@ dhcp-authoritative
 no-ping
 interface=usb0
 bind-interfaces
-listen-address=10.0.1.1
+listen-address=$BASE_IP.1
 dhcp-range=usb0,$BASE_IP.2,$BASE_IP.6,255.255.255.248,1h
 domain=usb.lan
 server=1.1.1.1
 #dhcp-option=usb0,3
-dhcp-option-force=option:router,10.0.1.1
+dhcp-option-force=option:router,$BASE_IP.1
 leasefile-ro
 bogus-priv
 domain-needed
